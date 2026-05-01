@@ -1,0 +1,103 @@
+# LogQL Detection Rules — Raspberry Pi Detection Lab
+# Format: Loki / Grafana alert rules
+# Author: Kunal Gawande | May 2026
+
+- rule_id: DR-001
+  name: SSH brute-force burst
+  mitre: T1110
+  severity: high
+  description: >
+    20+ failed SSH logins per minute from any source indicates a brute-force attack.
+  logql: |
+    sum(count_over_time({job="cowrie"} | json | event_id="cowrie.login.failed" [1m])) > 20
+
+- rule_id: DR-002
+  name: Successful honeypot login
+  mitre: T1110
+  severity: critical
+  description: >
+    Any successful login to the Cowrie honeypot is suspicious. Correlate src_ip
+    with preceding DR-001 events within a 5-minute window.
+  logql: |
+    {job="cowrie"} | json | event_id="cowrie.login.success"
+
+- rule_id: DR-003
+  name: Telnet connection to honeypot
+  mitre: T1110.001
+  severity: medium
+  description: >
+    Any Telnet session attempt. Legitimate Telnet use is essentially zero.
+  logql: |
+    {job="cowrie"} | json | protocol="telnet"
+
+- rule_id: DR-004
+  name: Sensitive file read command
+  mitre: T1003.008
+  severity: high
+  description: >
+    Commands reading sensitive files inside the honeypot session —
+    /etc/passwd, /etc/shadow, /etc/sudoers, SSH config, SSH keys.
+  logql: |
+    {job="cowrie"} | json | event_id="cowrie.command.input"
+    | line_format "{{.input}}"
+    |~ "(?i)(etc/passwd|etc/shadow|etc/sudoers|sshd_config|authorized_keys|id_rsa)"
+
+- rule_id: DR-005
+  name: auditd — identity file access
+  mitre: T1003.008
+  severity: high
+  description: >
+    auditd key=identity fired — read/write on /etc/passwd, /etc/shadow,
+    /etc/sudoers, or /etc/sudoers.d.
+  logql: |
+    {job="auditd"} |~ "key=\"identity\""
+
+- rule_id: DR-006
+  name: auditd — privilege escalation
+  mitre: T1548
+  severity: critical
+  description: >
+    auditd key=privesc fired — sudo or su binary executed.
+  logql: |
+    {job="auditd"} |~ "key=\"privesc\""
+
+- rule_id: DR-007
+  name: Recon tool execution
+  mitre: T1105
+  severity: high
+  description: >
+    auditd key=recon fired — wget, curl, nc, or nmap executed on the victim host.
+    Indicates download attempt or C2 activity.
+  logql: |
+    {job="auditd"} |~ "key=\"recon\""
+
+- rule_id: DR-008
+  name: Persistence — cron or SSH key modification
+  mitre: T1053.003
+  severity: critical
+  description: >
+    auditd key=persistence or key=ssh_key fired — crontab or
+    authorized_keys was modified.
+  logql: |
+    {job="auditd"} |~ "key=\"(persistence|ssh_key)\""
+
+- rule_id: DR-009
+  name: New honeypot session
+  mitre: T1078
+  severity: low
+  description: >
+    Any new connection to the Cowrie honeypot. Use as baseline metric
+    and feed into DR-001 correlation.
+  logql: |
+    {job="cowrie"} | json | event_id="cowrie.session.connect"
+
+- rule_id: DR-010
+  name: Multi-protocol scan from same source
+  mitre: T1595
+  severity: medium
+  description: >
+    Same source IP hits multiple honeypot protocols within 5 minutes.
+    Indicates systematic scanning.
+  logql: |
+    {job="cowrie"} | json | event_id="cowrie.session.connect"
+    | line_format "{{.src_ip}}"

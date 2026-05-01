@@ -1,0 +1,18 @@
+[Unit]
+Description=Cowrie SSH/Telnet Honeypot
+After=network.target
+
+[Service]
+Type=simple
+User=cowrie
+Group=cowrie
+WorkingDirectory=/home/cowrie/cowrie
+Environment="PATH=/home/cowrie/cowrie/cowrie-env/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="VIRTUAL_ENV=/home/cowrie/cowrie/cowrie-env"
+Environment="COWRIE_STDOUT=yes"
+ExecStart=/home/cowrie/cowrie/cowrie-env/bin/cowrie start
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

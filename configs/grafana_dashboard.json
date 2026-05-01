@@ -1,0 +1,360 @@
+{
+  "annotations": [
+    {
+      "kind": "AnnotationQuery",
+      "spec": {
+        "builtIn": true,
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "query": {
+          "datasource": {
+            "name": "-- Grafana --"
+          },
+          "group": "grafana",
+          "kind": "DataQuery",
+          "spec": {},
+          "version": "v0"
+        }
+      }
+    }
+  ],
+  "cursorSync": "Off",
+  "editable": true,
+  "elements": {
+    "panel-1": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "dfkqi4uhdeha8d"
+                    },
+                    "group": "loki",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "direction": "backward",
+                      "editorMode": "code",
+                      "expr": "sum(count_over_time({job=\"cowrie\"} | json | event_id=`cowrie.login.failed` [5m]))",
+                      "queryType": "range"
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "Failed SSH login attempts per 5 minutes — DR-001",
+        "id": 1,
+        "links": [],
+        "title": "SSH Brute Force Rate (failed logins/5min)",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "drawStyle": "line",
+                  "fillOpacity": 20,
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "showPoints": "auto"
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    { "color": "green", "value": 0 },
+                    { "color": "yellow", "value": 5 },
+                    { "color": "red", "value": 20 }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": { "displayMode": "list", "placement": "bottom" },
+              "tooltip": { "mode": "single" }
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-2": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "dfkqi4uhdeha8d"
+                    },
+                    "group": "loki",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "direction": "backward",
+                      "editorMode": "code",
+                      "expr": "sum(count_over_time({job=\"cowrie\"} | json | event_id=`cowrie.session.connect` [5m]))",
+                      "queryType": "range"
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "Total honeypot session connections per 5 minutes — DR-009",
+        "id": 2,
+        "links": [],
+        "title": "Honeypot Sessions (connections/5min)",
+        "vizConfig": {
+          "group": "timeseries",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "drawStyle": "bars",
+                  "fillOpacity": 60,
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "showPoints": "never"
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    { "color": "green", "value": 0 },
+                    { "color": "red", "value": 10 }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": { "displayMode": "list", "placement": "bottom" },
+              "tooltip": { "mode": "single" }
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-3": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "dfkqi4uhdeha8d"
+                    },
+                    "group": "loki",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "direction": "backward",
+                      "editorMode": "code",
+                      "expr": "{job=\"cowrie\"} | json | event_id=`cowrie.command.input` | line_format \"{{.src_ip}} | {{.input}}\"",
+                      "queryType": "range"
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "Commands typed by attackers inside Cowrie honeypot — DR-004",
+        "id": 3,
+        "links": [],
+        "title": "Attacker Commands (live)",
+        "vizConfig": {
+          "group": "logs",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "options": {
+              "dedupStrategy": "none",
+              "enableLogDetails": true,
+              "prettifyLogMessage": false,
+              "showCommonLabels": false,
+              "showLabels": false,
+              "showTime": true,
+              "sortOrder": "Descending",
+              "wrapLogMessage": true
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    },
+    "panel-4": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "dfkqi4uhdeha8d"
+                    },
+                    "group": "loki",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "direction": "backward",
+                      "editorMode": "code",
+                      "expr": "{job=\"cowrie\"} | json | event_id=`cowrie.login.success`",
+                      "queryType": "range"
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "Successful logins to honeypot — Critical — DR-002",
+        "id": 4,
+        "links": [],
+        "title": "Successful Honeypot Logins (CRITICAL)",
+        "vizConfig": {
+          "group": "logs",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "options": {
+              "dedupStrategy": "none",
+              "enableLogDetails": true,
+              "prettifyLogMessage": false,
+              "showCommonLabels": false,
+              "showLabels": false,
+              "showTime": true,
+              "sortOrder": "Descending",
+              "wrapLogMessage": true
+            }
+          },
+          "version": "13.0.1"
+        }
+      }
+    }
+  },
+  "layout": {
+    "kind": "GridLayout",
+    "spec": {
+      "items": [
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": { "kind": "ElementReference", "name": "panel-1" },
+            "height": 8,
+            "width": 12,
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": { "kind": "ElementReference", "name": "panel-2" },
+            "height": 8,
+            "width": 12,
+            "x": 12,
+            "y": 0
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": { "kind": "ElementReference", "name": "panel-3" },
+            "height": 10,
+            "width": 12,
+            "x": 0,
+            "y": 8
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": { "kind": "ElementReference", "name": "panel-4" },
+            "height": 10,
+            "width": 12,
+            "x": 12,
+            "y": 8
+          }
+        }
+      ]
+    }
+  },
+  "links": [],
+  "liveNow": false,
+  "preferences": {
+    "layout": {
+      "kind": "GridLayout",
+      "spec": { "items": [] }
+    }
+  },
+  "preload": false,
+  "tags": ["detection-lab", "cowrie", "honeypot", "mitre-attack"],
+  "timeSettings": {
+    "autoRefresh": "30s",
+    "autoRefreshIntervals": ["5s","10s","30s","1m","5m","15m","30m","1h","2h","1d"],
+    "fiscalYearStartMonth": 0,
+    "from": "now-6h",
+    "hideTimepicker": false,
+    "timezone": "browser",
+    "to": "now"
+  },
+  "title": "Detection Lab — Project 1",
+  "variables": []
+}
