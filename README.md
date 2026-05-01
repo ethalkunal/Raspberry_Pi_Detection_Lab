@@ -108,7 +108,7 @@ sum(count_over_time({job="cowrie"} | json | event_id="cowrie.login.failed" [1m])
 
 ## Dashboard
 
-![Detection Lab Dashboard](evidence/day09_grafana_dashboard_final.png)
+![Detection Lab Dashboard](evidence/grafana_dashboard.png)
 
 The dashboard shows:
 - SSH brute force rate (failed logins/5min)
